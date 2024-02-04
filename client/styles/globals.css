@@ -18,6 +18,7 @@ div#__next > div {
 
 html {
 	display: flex;
+	background-color: #fff4f7;
 }
 
 body {

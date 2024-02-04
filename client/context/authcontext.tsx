@@ -8,6 +8,7 @@ import {
 
 import { User } from "firebase/auth";
 import { auth } from "@/firebase/firebaseconfig";
+import { useRouter } from "next/router";
 
 interface IAuthContext {
 	user: User | null;
@@ -26,12 +27,14 @@ export function useAuth() {
 }
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
+	let router = useRouter();
 	const [user, setUser] = useState<User | null>(null);
 
 	function googlesignin() {
 		const provider = new GoogleAuthProvider();
 		signInWithPopup(auth, provider).then((result) => {
-			console.log(result);
+		}).catch((error) => {
+			console.log(error);
 		});
 	};
 	function logout() { signOut(auth); };
@@ -39,6 +42,11 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
 			setUser(currentUser);
+			// check if its a login or logout
+			// if its a login then redirect to the main page
+			console.log(currentUser?.toJSON());
+			if (currentUser) { router.push("/matchmaking");}
+			else { router.push("/");}
 		});
 		return () => unsubscribe();
 	}, [user]);

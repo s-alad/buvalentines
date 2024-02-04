@@ -8,13 +8,7 @@ import { get } from "http";
 // also only these routes can get the decoded jwt token data
 // Many of these routes do not exits yet. That's okay (:
 const protectedRoutes = [
-    "/main",
-    "/profile/[id]",
-    "/events/create",
-    "/events/edit/[event_id]",
-    "/events",
-    "/events/[event_id]",
-    "/protected",
+    "/matchmaking",
 ];
 
 const RedirectBasedOnAuth = ({ children }: { children: React.ReactNode }) => {
@@ -28,12 +22,12 @@ const RedirectBasedOnAuth = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         if (protectedRoutes.includes(currentRoute)) {
-            if (!user && !calledPush) {
+            if ((!user && !calledPush)) {
                 setCalledPush(true);
                 router.push("/");
                 return;
             }
-        }
+        } 
     }, [calledPush, currentRoute, router]);
 
     return children;

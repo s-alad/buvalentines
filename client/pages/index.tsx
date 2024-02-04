@@ -12,12 +12,13 @@ import Background from "@/components/background";
 import app from "@/firebase/firebaseconfig";
 import { getFirestore } from "firebase/firestore";
 import { useAuth } from "@/context/authcontext";
+import { useRouter } from "next/router";
 const db = getFirestore(app);
 
 
 export default function Home() {
-
-	const {user, googlesignin, logout} = useAuth();
+	const router = useRouter();
+	const { user, googlesignin, logout } = useAuth();
 
 	const [windowDefined, setWindowDefined] = useState(false);
 	useEffect(() => {
@@ -33,16 +34,30 @@ export default function Home() {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<main className={s.main}>
-				<h1>bu valentines</h1>
-				<button className={s.googlesignin}
-					onClick={
-						() => {
-							googlesignin();
-						}
-					}
-				>
-					log in with Googles
-				</button>
+				<h1 className={s.action}
+					onClick={() => { console.log(user) }}
+				>bu valentines</h1>
+				{
+					user ?
+						<button
+							onClick={() => {
+								router.push("/matchmaking");
+							}}
+						>
+							matchmaking
+						</button>
+						:
+						<button className={s.googlesignin}
+							onClick={
+								() => {
+									googlesignin();
+								}
+							}
+						>
+							<img src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png" />
+							Sign In with Google
+						</button>
+				}
 				<Background />
 			</main>
 

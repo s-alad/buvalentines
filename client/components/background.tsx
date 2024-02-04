@@ -25,6 +25,8 @@ export default function Background() {
                 scale: 1.0,
                 scaleMobile: 1.0,
                 backgroundColor: 0xffffff,
+                color1: 0xff58dc,
+                color2: 0xa75e5e,
                 birdSize: 2,
                 wingSpan: 20.0,
                 speedLimit: 2.0,
