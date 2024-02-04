@@ -36,6 +36,10 @@ function findMatches(players: Player[], questions: SurveyQuestion[]): [Player, P
             if (i == j)
                 continue;
 
+            // Make sure sexuality is compatible. Check both players' preferences
+            if (players[i].gender != players[j].preference || players[j].preference != players[i].gender)
+                continue;
+
             scores.get(players[i])!.push([players[j], calculateMatchScore(players[i], players[j], questions)]);
         }
 
