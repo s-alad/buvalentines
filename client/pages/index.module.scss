@@ -11,7 +11,15 @@
         color: #7a0811;
     }
 
+    .welcomeback {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
     .googlesignin {
+        text-align: center;
         display: flex;
         align-items: center;
         justify-content: space-between;

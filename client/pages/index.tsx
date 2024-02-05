@@ -18,13 +18,9 @@ const db = getFirestore(app);
 
 export default function Home() {
 	const router = useRouter();
-	const { user, googlesignin, logout } = useAuth();
+	const { user, status, googlesignin, logout } = useAuth();
 
-	const [windowDefined, setWindowDefined] = useState(false);
-	useEffect(() => {
-		setWindowDefined(true);
-	}, []);
-
+	console.log(user);
 	return (
 		<>
 			<Head>
@@ -39,13 +35,16 @@ export default function Home() {
 				>bu valentines</h1>
 				{
 					user ?
-						<button
+						<div className={s.welcomeback}>
+							welcome back {user.displayName?.split(" ")[0]} {"💘"}
+							<button className={s.googlesignin}
 							onClick={() => {
 								router.push("/matchmaking");
 							}}
 						>
 							matchmaking
 						</button>
+						</div>
 						:
 						<button className={s.googlesignin}
 							onClick={
@@ -58,6 +57,7 @@ export default function Home() {
 							Sign In with Google
 						</button>
 				}
+				{status == "nonbu" ? <div className={s.nonbu}>That's not a bu email...</div> : null}
 				<Background />
 			</main>
 
