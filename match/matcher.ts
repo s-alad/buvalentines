@@ -10,9 +10,7 @@
 function calculateMatchScore(a: Player, b: Player, questions: SurveyQuestion[]): number {
     let score = 0;
     for (let i = 0; i < questions.length; i++) {
-        if (a.responses[i] === b.responses[i]) {
-            score += questions[i].importance;
-        }
+        score += questions[i].compareAnswers(a.responses[i], b.responses[i])
     }
 
     return score;
