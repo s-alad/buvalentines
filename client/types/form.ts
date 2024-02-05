@@ -4,8 +4,12 @@ export type formdata = {
     email: string;
     name: string;
     age: number;
-    /* college: College; */
     year: Year;
+    gender: "male" | "female" | "nonbinary" | "other";
+    personality: Personality;
+    traits: Trait[];
+    preferredgender: "male" | "female" | "nonbinary" | "other";
+    /* preferredage: number; */
 };
 
 export type formfield = {
@@ -17,7 +21,7 @@ export type formfield = {
     valueAsNumber?: boolean;
     disabled?: boolean;
     defaultvalue?: string | undefined;
-    options?: string[];
+    options?: string[] | number[];
 };
 
 
@@ -25,8 +29,45 @@ export type ValidFieldNames =
     | "email"
     | "name"
     | "age"
-    /* | "college" */
-    | "year";
+    | "gender"
+    | "year"
+    | "personality"
+    | "traits"
+    | "preferredgender";
+    /* | "preferredage"; */
+
+export enum Personality {
+    "Introvert" = "Introvert",
+    "Extrovert" = "Extrovert",
+    "Ambivert" = "Ambivert",
+}
+
+export const Traits = [
+    "Adventurous",
+    "Artistic",
+    "Athletic",
+    "Bookish",
+    "Caring",
+    "Creative",
+    "Curious",
+    "Energetic",
+    "Funny",
+    "Generous",
+    "Honest",
+    "Kind",
+    "Loyal",
+    "Optimistic",
+    "Patient",
+    "Reliable",
+    "Responsible",
+    "Silly",
+    "Smart",
+    "Spontaneous",
+    "Thoughtful",
+    "Trustworthy",
+] as const;
+
+export type Trait = typeof Traits[number];
 
 export enum Year {
     "Freshman" = "2024",
