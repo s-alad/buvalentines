@@ -1,0 +1,17 @@
+.matchinput {
+    display: flex;
+    flex-direction: column;
+
+    input {
+        padding: 10px 20px;
+        font-size: 14px;
+        border-radius: 48px;
+        border: none;
+        background-color: white;
+        border: 3px solid #7a0811;
+    }
+    .error {
+        color: red;
+        font-size: 12px;
+    }
+}
