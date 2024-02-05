@@ -4,7 +4,8 @@ export type formdata = {
     email: string;
     name: string;
     age: number;
-    college: College;
+    /* college: College; */
+    year: Year;
 };
 
 export type formfield = {
@@ -16,6 +17,7 @@ export type formfield = {
     valueAsNumber?: boolean;
     disabled?: boolean;
     defaultvalue?: string | undefined;
+    options?: string[];
 };
 
 
@@ -23,7 +25,16 @@ export type ValidFieldNames =
     | "email"
     | "name"
     | "age"
-    | "college";
+    /* | "college" */
+    | "year";
+
+export enum Year {
+    "Freshman" = "2024",
+    "Sophmore" = "2025",
+    "Junior" = "2026",
+    "Senior" = "2027",
+    "Alumni" = "Alumni",
+}
 
 export enum College {
     CAS = "CAS",

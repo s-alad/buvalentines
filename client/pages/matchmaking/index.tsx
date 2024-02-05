@@ -1,6 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { formdata } from "@/types/form";
+import { College, formdata, Year } from "@/types/form";
 import { useAuth } from "@/context/authcontext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import s from "./matchmaking.module.scss";
@@ -8,6 +8,7 @@ import Unauthorized from "@/components/unauthorized/unauthorized";
 
 import MatchInput from "@/components/match-input/match-input";
 import { matchschema } from "@/types/schema";
+import MatchSelect from "@/components/match-select/match-select";
 
 export default function Matchmaking() {
     const { user, googlesignin, logout } = useAuth();
@@ -18,6 +19,9 @@ export default function Matchmaking() {
         setError,
     } = useForm<formdata>({
         resolver: zodResolver(matchschema),
+        defaultValues: {
+            email: user?.email || "",
+        },
     });
 
     const onSubmit = async (data: formdata) => {
@@ -32,8 +36,12 @@ export default function Matchmaking() {
                 Matchmaking
             </h1>
 
-
             <form onSubmit={handleSubmit(onSubmit)} className={s.matchform}>
+                <div className={s.matchdetails}>
+                    <div className={s.horizontal}></div>
+                    <div>your details</div>
+                    <div className={s.horizontal}></div>
+                </div>
                 <MatchInput
                     type="email"
                     name="email"
@@ -47,23 +55,45 @@ export default function Matchmaking() {
                     name="name"
                     register={register}
                     error={errors.name}
-                    placeholder="First Name"
+                    placeholder="Terrier"
                 />
                 <MatchInput
                     type="number"
                     name="age"
                     register={register}
                     error={errors.age}
-                    placeholder="Age"
+                    placeholder="69"
                     valueAsNumber={true}
                 />
-                <button type="submit" className="submit-button">
+                {/* <MatchSelect
+                    type="text"
+                    name="college"
+                    register={register}
+                    error={errors.college}
+                    options={Object.values(College)}
+                />  */}
+                <MatchSelect
+                    type="text"
+                    name="year"
+                    register={register}
+                    error={errors.year}
+                    options={Object.values(Year)}
+                />
+                <div className={s.matchdetails}>
+                    <div className={s.horizontal}></div>
+                    <div>match preferences</div>
+                    <div className={s.horizontal}></div>
+                </div>
+
+                
+
+                <button type="submit" className={s.submitmatch} onClick={()=>console.log("submit")}>
                     Submit
                 </button>
             </form>
             
             <div>{user?.email}</div>
-            <button onClick={() => {logout();}}>
+            <button onClick={() => {logout();}} >
                 Logout
             </button>
         </main>

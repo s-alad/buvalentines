@@ -1,10 +1,11 @@
 import { formfield } from "@/types/form";
 
-import s from "./match.module.scss";
+import s from "./match-input.module.scss";
 
 export default function MatchInput({ type, placeholder, name, register, error, valueAsNumber, disabled, defaultvalue }: formfield) {
     return (
         <div className={s.matchinput}>
+            <label htmlFor={name}>{name}:</label>
             <input
                 type={type}
                 placeholder={placeholder}
