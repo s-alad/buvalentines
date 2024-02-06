@@ -2,10 +2,10 @@ import { formfield } from "@/types/form";
 
 import s from "./match-select.module.scss";
 
-export default function MatchSelect({ type, placeholder, options, name, register, error, valueAsNumber, disabled, defaultvalue }: formfield) {
+export default function MatchSelect({ type, placeholder, description, options, name, register, error, valueAsNumber, disabled, defaultvalue }: formfield) {
     return (
         <div className={s.matchselect}>
-            <label htmlFor={name}>{name}:</label>
+            <label htmlFor={name}>{description ? description : name}:</label>
             <select
                 {...register(name, { valueAsNumber })}
                 disabled={disabled}

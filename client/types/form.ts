@@ -5,22 +5,30 @@ export type formdata = {
     name: string;
     age: number;
     year: Year;
-    gender: "male" | "female" | "nonbinary" | "other";
+    gender: Gender;
     personality: Personality;
     traits: Trait[];
-    preferredgender: "male" | "female" | "nonbinary" | "other";
-    /* preferredage: number; */
+    idealdate: IdealDate[];
+    lovelanguage: LoveLanguage[];
+    preferred_traits: Trait[];
+    preferred_gender: Gender;
+    preferred_age: Age[];
+    preferred_intelligence: OneToFive;
+    preferred_atractiveness: OneToFive;
+    preferred_personality: Personality[];
+    message: string;
 };
 
 export type formfield = {
+    register: UseFormRegister<formdata>;
     type: string;
     placeholder?: string;
     name: ValidFieldNames;
-    register: UseFormRegister<formdata>;
     error: FieldError | undefined;
     valueAsNumber?: boolean;
     disabled?: boolean;
     defaultvalue?: string | undefined;
+    description?: string;
     options?: string[] | number[];
 };
 
@@ -33,14 +41,32 @@ export type ValidFieldNames =
     | "year"
     | "personality"
     | "traits"
-    | "preferredgender";
-    /* | "preferredage"; */
+    | "idealdate"
+    | "lovelanguage"
+    | "preferred_gender"
+    | "preferred_traits"
+    | "preferred_age"
+    | "preferred_intelligence"
+    | "preferred_atractiveness"
+    | "preferred_personality"
+    | "message"; 
 
-export enum Personality {
-    "Introvert" = "Introvert",
-    "Extrovert" = "Extrovert",
-    "Ambivert" = "Ambivert",
+export enum OneToFive {
+    "least" = "1",
+    "two" = "2",
+    "three" = "3",
+    "four" = "4",
+    "most" = "5",
 }
+
+export const Ages = [ "18", "19", "20", "21", "22", "23", "24", "25"] as const;
+export type Age = typeof Ages[number];
+
+export const Genders = [ "male", "female", "nonbinary", "other"] as const;
+export type Gender = typeof Genders[number];
+
+export const Personalities = [ "Introvert", "Extrovert", "Ambivert", ] as const;
+export type Personality = typeof Personalities[number];
 
 export const Traits = [
     "Adventurous",
@@ -66,8 +92,29 @@ export const Traits = [
     "Thoughtful",
     "Trustworthy",
 ] as const;
-
 export type Trait = typeof Traits[number];
+
+export const IdealDates = [
+    "Amusement Park",
+    "Art Gallery",
+    "Arcade",
+    "Bar",
+    "Beach",
+    "Bookstore",
+    "Cafe",
+    "Concert",
+    "Dinner",
+    "Hiking",
+    "Museum",
+    "Netflix and Chill",
+    "Picnic",
+    "Theater",
+    "Zoo",
+] as const;
+export type IdealDate = typeof IdealDates[number];
+
+export const LoveLanguages = [ "Words of Affirmation", "Acts of Service", "Receiving Gifts", "Quality Time", "Physical Touch"] as const;
+export type LoveLanguage = typeof LoveLanguages[number];
 
 export enum Year {
     "Freshman" = "2024",

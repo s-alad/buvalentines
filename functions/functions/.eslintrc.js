@@ -4,6 +4,14 @@ module.exports = {
     es6: true,
     node: true,
   },
+  overrides: [
+    {
+      files: ["*.ts"],
+      rules: {
+        "max-len": "off",
+      },
+    },
+  ],
   extends: [
     "eslint:recommended",
     "plugin:import/errors",

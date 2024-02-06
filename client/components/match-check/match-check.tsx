@@ -2,11 +2,10 @@ import { formfield } from "@/types/form";
 
 import s from "./match-check.module.scss";
 
-export default function MatchCheck({ type, placeholder, options, name, register, error, valueAsNumber, disabled, defaultvalue }: formfield) {
+export default function MatchCheck({ type, description, placeholder, options, name, register, error, valueAsNumber, disabled, defaultvalue }: formfield) {
     return (
         <div className={s.matchcheck}>
-            <label htmlFor={name}>{name}:</label>
-            {/*multiple checkboxes can be selected */}
+            <label htmlFor={name}>{description ? description : name}:</label>
 
             {
                 options?.map((option, index) => {
