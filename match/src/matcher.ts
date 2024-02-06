@@ -1,5 +1,5 @@
-import Player from './player';
-import SurveyQuestion from './question';
+import Player from './models/player';
+import SurveyQuestion from './models/question';
 
 /**
  * Returns a number representing the match score between two players. Higher
