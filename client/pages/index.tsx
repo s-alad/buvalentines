@@ -38,12 +38,12 @@ export default function Home() {
 						<div className={s.welcomeback}>
 							welcome back {user.displayName?.split(" ")[0]} {"💘"}
 							<button className={s.googlesignin}
-							onClick={() => {
-								router.push("/matchmaking");
-							}}
-						>
-							matchmaking
-						</button>
+								onClick={() => {
+									router.push("/matchmaking");
+								}}
+							>
+								matchmaking
+							</button>
 						</div>
 						:
 						<button className={s.googlesignin}

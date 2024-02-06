@@ -1,8 +1,54 @@
+.nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    h1 {
+
+    }
+
+    .logout {
+        display: flex;
+        position: absolute;
+        right: 20px;
+        font-family: "vcute";
+        font-size: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        button {
+            margin-left: 12px;
+            cursor: pointer;
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 48px;
+            border: none;
+            background-color: white;
+            border: 3px solid #7a0811;
+            transition: all 0.3s ease;
+            &:hover {
+                background-color: #7a0811;
+                color: white;
+            }
+        
+        }
+    }
+}
+
 .matchmaking {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100%;
+    min-height: 100%;
+    padding-bottom: 20px;
+
+    p {
+        font-family: "vcute";
+        font-size: 24px;
+        text-align: center  ;
+    }
 
     .matchdetails {
         display: flex;

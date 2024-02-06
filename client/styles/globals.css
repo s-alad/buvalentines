@@ -6,6 +6,14 @@
 	font-family: "valentine";
 	src: url("../public/fonts/Valentine\ Cute.ttf") format("truetype");
 }
+@font-face {
+	font-family: "vcute";
+	src: url("../public/fonts/Vcute.ttf") format("truetype");
+}
+@font-face {
+	font-family: "vscratch";
+	src: url("../public/fonts/VScratch.ttf") format("truetype");
+}
 
 html,
 body,
