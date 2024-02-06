@@ -55,7 +55,8 @@ function findMatches(players: Player[], questions: SurveyQuestion[]): [Player, P
         for (let playerScore of playerScores) {
             // Only try to match when this player has NOT already been matches
             if (!pairs.find(pair => pair.includes(player) || pair.includes(playerScore[0]))) {
-                pairs.push(playerScore[1] > playerScore[0] ? [player, playerScore[0]] : [playerScore[0], player]);
+                // if the player has not been matched, compare the scores and add the best match
+                pairs.push([player, playerScore[0]])
                 break;
             }
         }
