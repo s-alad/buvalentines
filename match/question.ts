@@ -1,4 +1,4 @@
-abstract class SurveyQuestion {
+export default abstract class SurveyQuestion {
 
     question: string;
 

@@ -1,4 +1,4 @@
-class Player {
+export default class Player {
     gender: Gender;
     preference: Gender;
     responses: any[];
@@ -10,7 +10,7 @@ class Player {
     }
 }
 
-enum Gender {
+export enum Gender {
     Male = 'Male',
     Female = 'Female',
     Other = 'Other'

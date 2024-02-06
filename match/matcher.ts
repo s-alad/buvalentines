@@ -1,3 +1,6 @@
+import Player from './player';
+import SurveyQuestion from './question';
+
 /**
  * Returns a number representing the match score between two players. Higher
  * numbers mean that the match is better. The match score is calculated by
@@ -48,7 +51,6 @@ function findMatches(players: Player[], questions: SurveyQuestion[]): [Player, P
     // At this point, we have a map of players to their best matches. Even if
     // the match score is low, they will be included in the list.
 
-    // @ts-ignore
     for (let [player, playerScores] of scores) {
         for (let playerScore of playerScores) {
             // Only try to match when this player has NOT already been matches

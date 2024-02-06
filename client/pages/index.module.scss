@@ -35,6 +35,11 @@
         border: none;
         background-color: white;
         border: 3px solid #7a0811;
+        transition: all 0.3s ease;
+            &:hover {
+                background-color: #7a0811;
+                color: white;
+            }
 
         img {
             height: 38px;
