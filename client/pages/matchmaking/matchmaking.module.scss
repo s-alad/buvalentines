@@ -13,16 +13,17 @@
         position: absolute;
         right: 20px;
         font-family: "vcute";
-        font-size: 32px;
+        font-size: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
 
         button {
+            font-family: "vcute";
             margin-left: 12px;
             cursor: pointer;
             padding: 10px 20px;
-            font-size: 14px;
+            font-size: 24px;
             border-radius: 48px;
             border: none;
             background-color: white;

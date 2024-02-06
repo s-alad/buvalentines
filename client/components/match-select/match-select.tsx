@@ -10,8 +10,9 @@ export default function MatchSelect({ type, placeholder, description, options, n
                 {...register(name, { valueAsNumber })}
                 disabled={disabled}
                 className={s.matchselect}
+                defaultValue={"select"}
             >
-                <option value="" disabled selected>Select your {name}</option>
+                <option value="select" disabled>Select your {name}</option>
                 {
                     options?.map((option, index) => {
                         return (
