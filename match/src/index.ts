@@ -8,7 +8,8 @@ admin.initializeApp({
 const firestore = admin.firestore();
 const collectionRef = firestore.collection('unmatched');
 
-collectionRef.get()
+async function unmatched() {
+    collectionRef.get()
     .then((snapshot) => {
         snapshot.forEach((doc) => {
             console.log('Document ID:', doc.id, 'Data:', doc.data());
@@ -17,6 +18,9 @@ collectionRef.get()
     .catch((error) => {
         console.error('Error getting documents:', error);
     });
+}
+unmatched();
+
 
 interface Matchee {
     name: string;
@@ -57,3 +61,4 @@ async function match() {
         console.error("Error adding user to Firestore:", error);
     }
 }
+// match();
