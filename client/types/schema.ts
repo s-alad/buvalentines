@@ -1,5 +1,5 @@
 import { z, ZodEnum, ZodType } from "zod"; // Add new import
-import { formdata, Personality, Traits, OneToFive, College, Year, Personalities, Genders, IdealDate, IdealDates, LoveLanguages  } from "./form";
+import { formdata, Personality, Traits, OneToFive, College, Year, Personalities, Genders, IdealDate, IdealDates, LoveLanguages, Interests  } from "./form";
 
 export const matchschema: ZodType<formdata> = z
     .object({
@@ -37,6 +37,11 @@ export const matchschema: ZodType<formdata> = z
             errorMap: (issue, ctx) => {
                 return {message: 'Please select at least one love language'};
             },
+        }),
+        interests: z.array(z.enum(Interests), {
+            errorMap: (issue, ctx) => {
+                return {message: 'Please select at least one interest'};
+            }
         }),
 
         preferred_age: z.array(z.enum(["18", "19", "20", "21", "22", "23", "24", "25"], {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Ages, College, formdata, IdealDates, LoveLanguages, OneToFive, Personalities, Personality, Traits, Year } from "@/types/form";
+import { Ages, College, formdata, IdealDates, Interests, LoveLanguages, OneToFive, Personalities, Personality, Traits, Year } from "@/types/form";
 import { useAuth } from "@/context/authcontext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import s from "./matchmaking.module.scss";
@@ -156,6 +156,14 @@ export default function Matchmaking() {
                                     error={errors.idealdate as any}
                                     options={Object.values(IdealDates)}
                                     description="select your ideal dates"
+                                />
+                                <MatchCheck
+                                    type="checkbox"
+                                    name="interests"
+                                    register={register}
+                                    error={errors.interests as any}
+                                    options={Object.values(Interests)}
+                                    description="select your interests"
                                 />
 
                                 <div className={s.matchdetails}>

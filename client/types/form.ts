@@ -10,6 +10,7 @@ export type formdata = {
     traits: Trait[];
     idealdate: IdealDate[];
     lovelanguage: LoveLanguage[];
+    interests: Interest[];
     preferred_traits: Trait[];
     preferred_gender: Gender;
     preferred_age: Age[];
@@ -43,6 +44,7 @@ export type ValidFieldNames =
     | "traits"
     | "idealdate"
     | "lovelanguage"
+    | "interests"
     | "preferred_gender"
     | "preferred_traits"
     | "preferred_age"
@@ -67,6 +69,25 @@ export type Gender = typeof Genders[number];
 
 export const Personalities = [ "Introvert", "Extrovert", "Ambivert", ] as const;
 export type Personality = typeof Personalities[number];
+
+export const LoveLanguages = [ "Words of Affirmation", "Acts of Service", "Receiving Gifts", "Quality Time", "Physical Touch"] as const;
+export type LoveLanguage = typeof LoveLanguages[number];
+
+export const Interests = [
+    "Art",
+    "Books",
+    "Cooking",
+    "Dancing",
+    "Gaming",
+    "Hiking",
+    "Movies",
+    "Music",
+    "Photography",
+    "Sports",
+    "Traveling",
+    "Writing",
+] as const;
+export type Interest = typeof Interests[number];
 
 export const Traits = [
     "Adventurous",
@@ -112,9 +133,6 @@ export const IdealDates = [
     "Zoo",
 ] as const;
 export type IdealDate = typeof IdealDates[number];
-
-export const LoveLanguages = [ "Words of Affirmation", "Acts of Service", "Receiving Gifts", "Quality Time", "Physical Touch"] as const;
-export type LoveLanguage = typeof LoveLanguages[number];
 
 export enum Year {
     "Freshman" = "2024",

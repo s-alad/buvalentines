@@ -1,26 +1,95 @@
 import * as admin from 'firebase-admin';
+import { formdata } from "../../client/types/form";
 
-const serviceAccount = require('./config/buvservicekey.json');
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-});
-
+// firebase ========================================================
+admin.initializeApp({ credential: admin.credential.cert(require('./config/buvservicekey.json')) });
 const firestore = admin.firestore();
 const collectionRef = firestore.collection('unmatched');
-
-async function unmatched() {
-    collectionRef.get()
-    .then((snapshot) => {
-        snapshot.forEach((doc) => {
-            console.log('Document ID:', doc.id, 'Data:', doc.data());
-        });
-    })
-    .catch((error) => {
-        console.error('Error getting documents:', error);
-    });
+// =================================================================
+interface Player {
+    data: formdata;
+    // a dictionary of players email and their scores
+    scores: Map<string, number>;
+    email: string;
 }
-unmatched();
 
+let population: Player[] = [];
+
+async function unmatched(): Promise<void> {
+    return collectionRef.get()
+        .then((snapshot) => {
+            snapshot.forEach((doc) => {
+                let data = doc.data() as formdata;
+                let player = {
+                    data: data,
+                    scores: new Map<string, number>(),
+                    email: data.email
+                }
+                population.push(player);
+            });
+        })
+        .catch((error) => { console.error('Error getting documents:', error); });
+}
+
+async function scorer() {
+    // for each player in the population
+    for (let p of population) {
+        for (let q of population) {
+            // don't compare a player to themselves
+            if (p.email === q.email) {
+                continue;
+            }
+            // Make sure sexuality is compatible. Check both players' preferences
+            if (p.data && q.data
+                && p.data.preferred_gender === q.data.gender
+                && q.data.preferred_gender === p.data.gender
+            ) {
+                // calculate match score
+                let score = 0;
+
+                /* const shared_interests = p.data.interests.filter(x => q.data.interests.includes(x)); */
+                const shared_idealdate = p.data.idealdate.filter(x => q.data.idealdate.includes(x));
+                const shared_traits = p.data.traits.filter(x => q.data.traits.includes(x));
+                const shared_lovelanguage = p.data.lovelanguage.filter(x => q.data.lovelanguage.includes(x));
+                const has_ideal_personality = p.data.preferred_personality.includes(q.data.personality);
+                const has_ideal_age = p.data.preferred_age.includes(q.data.age.toString() as any);
+                const has_simmilar_preferred_intelligence = 5 - Math.abs(
+                    parseInt(p.data.preferred_intelligence as string) - parseInt(q.data.preferred_intelligence as string)
+                )
+                const has_simmilar_preferred_atractiveness = 5 - Math.abs(
+                    parseInt(p.data.preferred_atractiveness as string) - parseInt(q.data.preferred_atractiveness as string)
+                )
+                // give one point for each shared interest
+                // score += shared_interests.length;
+                // give one point for each shared ideal date
+                score += shared_idealdate.length;
+                // give one point for each shared trait
+                score += shared_traits.length;
+                // give one and a half points for each shared love language
+                score += shared_lovelanguage.length * 1.5;
+                // give two points if the personality is ideal
+                score += has_ideal_personality ? 2 : 0;
+                // give two and a half points if the age is ideal
+                score += has_ideal_age ? 2.5 : 0;
+                // give zero to two and a half points based on the difference in preferred intelligence
+                score += has_simmilar_preferred_intelligence / 2;
+                // give zero to two and a half points based on the difference in preferred attractiveness
+                score += has_simmilar_preferred_atractiveness / 2;
+                
+                console.log(p.data.email, "+", q.data.email)
+                console.log(score)
+                console.log(/* shared_interests, */ shared_idealdate, shared_traits, shared_lovelanguage, has_ideal_personality, has_ideal_age, has_simmilar_preferred_intelligence, has_simmilar_preferred_atractiveness)
+            }
+        }
+    }
+}
+
+async function main() {
+    await unmatched();
+    console.log(population)
+    await scorer();
+}
+main()
 
 interface Matchee {
     name: string;
