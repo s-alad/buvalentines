@@ -90,6 +90,7 @@ async function sorter() {
 }
 
 let engaged: Map<string, string> = new Map<string, string>();
+let leftover: Set<string> = new Set<string>();
 // Gale–Shapley algorithm, however if there are people who are not matched, and there is no more of the gender to match with, then they will be unmatched
 async function matcher() {
     let free: string[] = [];
@@ -137,6 +138,7 @@ async function matcher() {
     unmatched.forEach(email => {
         // Store or handle the unmatched individuals as needed
         console.log(`${email} is unmatched.`);
+        leftover.add(email);
     });
 }
 
@@ -148,6 +150,7 @@ async function main() {
     await matcher();
     //console.log(population)
     console.log(engaged)
+    console.log(leftover)
 }
 main()
 
