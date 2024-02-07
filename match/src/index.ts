@@ -56,13 +56,13 @@ async function scorer() {
                 const has_simmilar_preferred_atractiveness = 5 - Math.abs(parseInt(p.data.preferred_atractiveness as string) - parseInt(q.data.preferred_atractiveness as string))
                 
                 // give one point for each shared interest
-                score += (shared_interests.length / Math.max(p.data.interests.length, q.data.interests.length)) ** 2;
+                score += 2 * shared_interests.length - Math.min(p.data.interests.length, q.data.interests.length)
                 // give one point for each shared ideal date
-                score += (shared_idealdate.length / Math.max(p.data.idealdate.length, q.data.idealdate.length)) ** 2;
+                score += 2 * shared_idealdate.length - Math.min(p.data.idealdate.length, q.data.idealdate.length);
                 // give one point for each shared trait
-                score += (shared_traits.length / Math.max(p.data.traits.length, q.data.traits.length)) ** 2;
+                score += 2 * shared_traits.length - Math.min(p.data.traits.length, q.data.traits.length);
                 // give one and a half points for each shared love language
-                score += (shared_lovelanguage.length / Math.max(p.data.lovelanguage.length, q.data.lovelanguage.length)) ** 2 * 1.5;
+                score += 2 * shared_lovelanguage.length - Math.min(p.data.lovelanguage.length, q.data.lovelanguage.length);
                 // give two points if the personality is ideal
                 score += has_ideal_personality ? 2 : 0;
                 // give two and a half points if the age is ideal
