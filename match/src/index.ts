@@ -104,19 +104,31 @@ async function matcher() {
 
     while (free.length > 0) {
         let p = free.shift()!; // Dequeue the first element
-        let q = proposals.get(p)!.shift()!; // Dequeue the first preference of p
-        console.log(p, q)
+        let preferences = proposals.get(p)!;
 
-        if (!engaged.has(q)) {
-            engaged.set(q, p);
-        } else {
-            let p1 = engaged.get(q)!;
-            if (population.find(x => x.email === p1)!.scores.get(q)! < population.find(x => x.email === p)!.scores.get(q)!) {
-                free.push(p1);
+        while (preferences.length > 0) {
+            let q = preferences.shift()!; // Dequeue the first preference of p
+
+            if (!engaged.has(q)) {
                 engaged.set(q, p);
+                break; // Successfully engaged, exit inner loop
+            } else {
+                let p1 = engaged.get(q)!;
+                if (
+                    population.find(x => x.email === p1)!.scores.get(q)! < population.find(x => x.email === p)!.scores.get(q)! ||
+                    (population.find(x => x.email === p1)!.scores.get(q)! === population.find(x => x.email === p)!.scores.get(q)! &&
+                        p < p1) // Tie-breaker: lexicographic order of emails
+                ) {
+                    free.push(p1); // p1 becomes free, and p gets engaged
+                    engaged.set(q, p);
+                    break; // Successfully added to free list, exit inner loop
+                } else {
+                    // p remains free to be matched with other preferences
+                }
             }
         }
-        if (proposals.get(p)!.length === 0) {
+
+        if (preferences.length === 0) {
             unmatched.add(p); // If p exhausts all preferences without getting engaged, add to unmatched set
         }
     }
@@ -127,6 +139,7 @@ async function matcher() {
         console.log(`${email} is unmatched.`);
     });
 }
+
 
 async function main() {
     await unmatched();
