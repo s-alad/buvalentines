@@ -6,9 +6,9 @@ admin.initializeApp({ credential: admin.credential.cert(require('./config/buvser
 const firestore = admin.firestore();
 const collectionRef = firestore.collection('unmatched');
 // =================================================================
+
 interface Player {
     data: formdata;
-    // a dictionary of players email and their scores
     scores: Map<string, number>;
     email: string;
 }
@@ -39,28 +39,25 @@ async function scorer() {
             if (p.email === q.email) {
                 continue;
             }
+
+            let score = 0;
             // Make sure sexuality is compatible. Check both players' preferences
             if (p.data && q.data
                 && p.data.preferred_gender === q.data.gender
                 && q.data.preferred_gender === p.data.gender
             ) {
                 // calculate match score
-                let score = 0;
-
-                /* const shared_interests = p.data.interests.filter(x => q.data.interests.includes(x)); */
+                const shared_interests = p.data.interests.filter(x => q.data.interests.includes(x));
                 const shared_idealdate = p.data.idealdate.filter(x => q.data.idealdate.includes(x));
                 const shared_traits = p.data.traits.filter(x => q.data.traits.includes(x));
                 const shared_lovelanguage = p.data.lovelanguage.filter(x => q.data.lovelanguage.includes(x));
                 const has_ideal_personality = p.data.preferred_personality.includes(q.data.personality);
                 const has_ideal_age = p.data.preferred_age.includes(q.data.age.toString() as any);
-                const has_simmilar_preferred_intelligence = 5 - Math.abs(
-                    parseInt(p.data.preferred_intelligence as string) - parseInt(q.data.preferred_intelligence as string)
-                )
-                const has_simmilar_preferred_atractiveness = 5 - Math.abs(
-                    parseInt(p.data.preferred_atractiveness as string) - parseInt(q.data.preferred_atractiveness as string)
-                )
+                const has_simmilar_preferred_intelligence = 5 - Math.abs(parseInt(p.data.preferred_intelligence as string) - parseInt(q.data.preferred_intelligence as string))
+                const has_simmilar_preferred_atractiveness = 5 - Math.abs(parseInt(p.data.preferred_atractiveness as string) - parseInt(q.data.preferred_atractiveness as string))
+                
                 // give one point for each shared interest
-                // score += shared_interests.length;
+                score += shared_interests.length;
                 // give one point for each shared ideal date
                 score += shared_idealdate.length;
                 // give one point for each shared trait
@@ -78,7 +75,45 @@ async function scorer() {
                 
                 console.log(p.data.email, "+", q.data.email)
                 console.log(score)
-                console.log(/* shared_interests, */ shared_idealdate, shared_traits, shared_lovelanguage, has_ideal_personality, has_ideal_age, has_simmilar_preferred_intelligence, has_simmilar_preferred_atractiveness)
+                console.log(shared_interests, shared_idealdate, shared_traits, shared_lovelanguage, has_ideal_personality, has_ideal_age, has_simmilar_preferred_intelligence, has_simmilar_preferred_atractiveness)
+            }
+
+            p.scores.set(q.email, score);
+        }
+    }
+}
+
+// sort the population by scores
+async function sorter() {
+    for (let p of population) {
+        p.scores = new Map([...p.scores.entries()].sort((a, b) => b[1] - a[1]));
+    }
+}
+
+let engaged: Map<string, string> = new Map<string, string>();
+// Gale–Shapley algorithm, however if there are people who are not matched, and there is no more of the gender to match with, then they will be unmatched
+async function matcher() {
+    let free: string[] = [];
+    let proposals: Map<string, string[]> = new Map<string, string[]>();
+
+    for (let p of population) {
+        free.push(p.email);
+        proposals.set(p.email, Array.from(p.scores.keys()));
+    }
+
+    while (free.length > 0) {
+        let p = free[0];
+        let q = proposals.get(p)![0];
+
+        if (!engaged.has(q)) {
+            engaged.set(q, p);
+            free.shift();
+        } else {
+            let p1 = engaged.get(q)!;
+            if (population.find(x => x.email === p1)!.scores.get(q)! < population.find(x => x.email === p)!.scores.get(q)!) {
+                free.shift();
+                free.push(p1);
+                engaged.set(q, p);
             }
         }
     }
@@ -86,8 +121,11 @@ async function scorer() {
 
 async function main() {
     await unmatched();
-    console.log(population)
     await scorer();
+    await sorter();
+    await matcher();
+    //console.log(population)
+    console.log(engaged)
 }
 main()
 
