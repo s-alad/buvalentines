@@ -6,7 +6,6 @@ admin.initializeApp({ credential: admin.credential.cert(require('./config/buvser
 const firestore = admin.firestore();
 const collectionRef = firestore.collection('unmatched');
 // =================================================================
-
 interface Player {
     data: formdata;
     scores: Map<string, number>;
@@ -101,22 +100,32 @@ async function matcher() {
         proposals.set(p.email, Array.from(p.scores.keys()));
     }
 
+    let unmatched: Set<string> = new Set<string>(); // Set to store unmatched individuals
+
     while (free.length > 0) {
-        let p = free[0];
-        let q = proposals.get(p)![0];
+        let p = free.shift()!; // Dequeue the first element
+        let q = proposals.get(p)!.shift()!; // Dequeue the first preference of p
+        console.log(p, q)
 
         if (!engaged.has(q)) {
             engaged.set(q, p);
-            free.shift();
         } else {
             let p1 = engaged.get(q)!;
             if (population.find(x => x.email === p1)!.scores.get(q)! < population.find(x => x.email === p)!.scores.get(q)!) {
-                free.shift();
                 free.push(p1);
                 engaged.set(q, p);
             }
         }
+        if (proposals.get(p)!.length === 0) {
+            unmatched.add(p); // If p exhausts all preferences without getting engaged, add to unmatched set
+        }
     }
+
+    // Handle unmatched individuals
+    unmatched.forEach(email => {
+        // Store or handle the unmatched individuals as needed
+        console.log(`${email} is unmatched.`);
+    });
 }
 
 async function main() {
