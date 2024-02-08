@@ -13,6 +13,7 @@ interface Player {
 }
 
 let population: Player[] = [];
+let populationmap: Map<string, Player> = new Map();
 
 async function unmatched(): Promise<void> {
     return collectionRef.get()
@@ -25,6 +26,7 @@ async function unmatched(): Promise<void> {
                     email: data.email
                 }
                 population.push(player);
+                populationmap.set(data.email, player);
             });
         })
         .catch((error) => { console.error('Error getting documents:', error); });
@@ -72,12 +74,12 @@ async function scorer() {
                 // give zero to two and a half points based on the difference in preferred attractiveness
                 score += has_simmilar_preferred_atractiveness / 2;
                 
-                console.log(p.data.email, "+", q.data.email)
-                console.log(score)
-                console.log(shared_interests, shared_idealdate, shared_traits, shared_lovelanguage, has_ideal_personality, has_ideal_age, has_simmilar_preferred_intelligence, has_simmilar_preferred_atractiveness)
+                //console.log(p.data.email, "+", q.data.email)
+                //console.log(score)
+                //console.log(shared_interests, shared_idealdate, shared_traits, shared_lovelanguage, has_ideal_personality, has_ideal_age, has_simmilar_preferred_intelligence, has_simmilar_preferred_atractiveness)
+                
+                p.scores.set(q.email, score);
             }
-
-            p.scores.set(q.email, score);
         }
     }
 }
@@ -88,109 +90,112 @@ async function sorter() {
         p.scores = new Map([...p.scores.entries()].sort((a, b) => b[1] - a[1]));
     }
 }
+interface MatchedPairs { [key: string]: { partner: string; score: number } | "unmatched"; }
 
-let engaged: Map<string, string> = new Map<string, string>();
-let leftover: Set<string> = new Set<string>();
-// Gale–Shapley algorithm, however if there are people who are not matched, and there is no more of the gender to match with, then they will be unmatched
+// Gale–Shapley algorithm
 async function matcher() {
-    let free: string[] = [];
-    let proposals: Map<string, string[]> = new Map<string, string[]>();
+    const engaged: MatchedPairs = {};
+    const matchedSet = new Set<string>();
 
-    for (let p of population) {
-        free.push(p.email);
-        proposals.set(p.email, Array.from(p.scores.keys()));
-    }
 
-    let unmatched: Set<string> = new Set<string>(); // Set to store unmatched individuals
+    for (let player of population) {
+        const { email, scores } = player;
+        console.log(email, scores)
+        
+        for (const [target, score] of scores) {
+            if (!matchedSet.has(email) && !matchedSet.has(target)) {
 
-    while (free.length > 0) {
-        let p = free.shift()!; // Dequeue the first element
-        let preferences = proposals.get(p)!;
+                player.scores.delete(target);
 
-        while (preferences.length > 0) {
-            let q = preferences.shift()!; // Dequeue the first preference of p
-
-            if (!engaged.has(q)) {
-                engaged.set(q, p);
-                break; // Successfully engaged, exit inner loop
-            } else {
-                let p1 = engaged.get(q)!;
-                if (
-                    population.find(x => x.email === p1)!.scores.get(q)! < population.find(x => x.email === p)!.scores.get(q)! ||
-                    (population.find(x => x.email === p1)!.scores.get(q)! === population.find(x => x.email === p)!.scores.get(q)! &&
-                        p < p1) // Tie-breaker: lexicographic order of emails
-                ) {
-                    free.push(p1); // p1 becomes free, and p gets engaged
-                    engaged.set(q, p);
-                    break; // Successfully added to free list, exit inner loop
-                } else {
-                    // p remains free to be matched with other preferences
-                }
-            }
+                engaged[email] = { partner: target, score };
+                engaged[target] = { partner: email, score };
+                matchedSet.add(email);
+                matchedSet.add(target);
+                break;
+            } 
         }
+        console.log(engaged)
 
-        if (preferences.length === 0) {
-            unmatched.add(p); // If p exhausts all preferences without getting engaged, add to unmatched set
+        if (!matchedSet.has(email)) {
+            engaged[email] = "unmatched";
         }
     }
 
-    // Handle unmatched individuals
-    unmatched.forEach(email => {
-        // Store or handle the unmatched individuals as needed
-        console.log(`${email} is unmatched.`);
-        leftover.add(email);
-    });
+    return engaged;
 }
 
+async function match(engaged: MatchedPairs) {
 
+    let sentset = new Set<string>();
+
+    for (let [email, value] of Object.entries(engaged)) {
+
+        if (sentset.has(email)) { continue; }
+
+        if (value === "unmatched") {
+            console.log("unmatched", email)
+            console.log(populationmap.get(email)?.data)
+            try {
+                await firestore.collection("nomatches").doc(email).set( populationmap.get(email)?.data!)
+            } catch (error) {
+                console.error("Error adding user to Firestore:", error);
+            }
+        } else {
+            let matchid = email + "+" + value.partner;
+            let matchee1 = populationmap.get(email)?.data;
+            let matchee2 = populationmap.get(value.partner)?.data;
+
+            let shared_interests = matchee1?.interests.filter(x => matchee2?.interests.includes(x));
+            let shared_idealdate = matchee1?.idealdate.filter(x => matchee2?.idealdate.includes(x));
+
+            let p1 = {
+                name: matchee1?.name,
+                email: matchee1?.email,
+                age: matchee1?.age,
+                gender: matchee1?.gender,
+                message: matchee1?.message || ""
+            }
+            let p2 = {
+                name: matchee2?.name,
+                email: matchee2?.email,
+                age: matchee2?.age,
+                gender: matchee2?.gender,
+                message: matchee2?.message || ""
+            }
+            let shared = {
+                interests: shared_interests,
+                idealdate: shared_idealdate
+            }
+
+            try {
+                await firestore.collection("matched").doc(matchid).set(
+                    { p1, p2, shared }
+                )
+                delete engaged[value.partner];
+                delete engaged[email];
+            } catch (error) {
+                console.error("Error adding user to Firestore:", error);
+            }
+
+            sentset.add(value.partner);
+            sentset.add(email);
+        }
+
+    }
+}
+
+// =================================================================
 async function main() {
     await unmatched();
     await scorer();
     await sorter();
-    await matcher();
-    //console.log(population)
-    console.log(engaged)
-    console.log(leftover)
+    for (let p of population) {
+        console.log(p.email, p.scores);
+    }
+    console.log("=====================================")
+    let engaged = await matcher();
+    console.log("=====================================")
+    console.log(engaged);
+    //await match(engaged);
 }
 main()
-
-interface Matchee {
-    name: string;
-    email: string;
-    age: number
-    gender: string;
-    message: string;
-}
-
-async function match() {
-    const matchexample = {
-        p1: {
-            name: "Bob",
-            email: "bob@bu.edu",
-            age: 20,
-            gender: "male",
-            message: "hey"
-        },
-        p2: {
-            name: "Alice",
-            email: "alice@bu.edu",
-            age: 20,
-            gender: "female",
-            message: "hi"
-        },
-        shared: {
-            interests: ["x1", "x2", "x3"],
-            idealdate: ["y1", "y2", "y3"]
-        }
-    }
-    const matchidexample = matchexample.p1.email + "+" + matchexample.p2.email;
-
-    // write this data to a firestore collection called "matched"
-    try {
-        await firestore.collection("matched").doc(matchidexample).set(matchexample);
-        console.log(`Match ${matchidexample} added to Firestore.`);
-    } catch (error) {
-        console.error("Error adding user to Firestore:", error);
-    }
-}
-// match();
